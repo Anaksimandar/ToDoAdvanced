@@ -1,0 +1,37 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<div class="container">
+    <div class="to-do-view-container">
+        <div class="side-bar">
+            <h1 class="h-1">LISTS</h1>
+            <div class="list-container">
+                <div *ngFor="let list of this.lists;">
+                    <a [routerLink]="['/lists',list._id]" routerLinkActive="active" class="list-element">{{list.title}}</a>
+                </div>
+            </div>
+            <a [routerLink]="['/new-list']"  class="btn-add-list">
+                ADD LIST
+            </a>
+        </div>
+        
+        <div class="main-bar">
+            <h1 class="h-1">TASKS</h1>
+            <div class="task-container">
+                <div *ngIf="this.tasks === undefined; else showTasks">
+                    <div class="alert alert-info">Izaberite listu</div>
+                </div>
+                <div *ngIf="this.tasks != undefined && this.tasks.length === 0; else showTasks">
+                    <div class="alert alert-info">Trenutno nema zadataka za izabranu listu</div>
+                </div>
+                <ng-template #showTasks >
+                    <div [ngClass]="{completed: task.completed}" *ngFor="let task of this.tasks" (click)="toggleComplete(task)">
+                        <a   class="task-element">{{task.title}}</a>
+                    </div>
+                </ng-template>
+            </div>
+            <a [routerLink]="['./new-task']"  class="btn-add-task">+</a>
+            
+            
+        </div>
+        
+    </div>
+</div>

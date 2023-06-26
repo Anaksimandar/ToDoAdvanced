@@ -1,0 +1,131 @@
+*{
+    font-family: 'Roboto', sans-serif;
+}
+.container{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.h-1{
+    color: #79E0EE;
+    font-size: 31px;
+}
+.to-do-view-container{
+    display: flex;
+    min-width: 800px;
+    min-height: 600px;
+    background-color: white;
+}
+
+.side-bar{
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    height: 500px;
+    background-color: white;
+    padding: 32px;
+    border-right: 2px solid #b2c2c4;
+}
+
+.task-container{
+    height: 100%;
+    overflow-y: scroll;
+}
+
+.list-container{
+    margin: 16px;
+    overflow-y: scroll;
+    height:100%;
+}
+.main-bar{
+    display: flex;
+    flex-direction: column;
+    height: 500px;
+    position: relative;
+}
+.list-element{
+    font-size: 20px;
+    padding: 8px;
+}
+
+.task-element {
+    margin: 8px;
+    font-size: 20px;
+    padding: 8px;
+    
+}
+.alert{
+    font-size: 20px;
+    padding: 8px;
+}
+.list-element:hover{
+    background-color: hsl(187, 77%, 80%);
+}
+
+.main-bar{
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 300px);
+    height: 500px;
+    background-color: white;
+    padding: 32px;
+}
+
+.btn-add-list{
+    margin:0 auto;
+    width: fit-content;
+    margin-top: 8px;
+    font-size: 15px;
+    text-decoration: none;
+    background-color: #79E0EE;
+    border-radius: 5px;
+    color: white;
+
+}
+
+.btn-add-task{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background-color: aqua;
+    position: absolute;
+    bottom: 32px;
+    right: 64px;
+    border-radius:50%;
+    font-size: 32px;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.btn-add-list:hover{
+    background-color:#65bac5 ;
+    
+}
+
+.btn-add-task:hover{
+    background-color:#65bac5;
+    
+}
+
+a{
+    padding: 16px 24px;
+    text-decoration: none;
+    display: block;
+    color: black;
+}
+
+.task-element:hover{
+    box-shadow: 0px 0px 5px black;
+}
+
+.active{
+    background-color: hsl(187, 77%, 80%);
+}
+
+
+.completed{
+    text-decoration: line-through;
+}

@@ -1,0 +1,18 @@
+
+// JWT autentifikacija
+
+route: /user/sign-in | POST
+
+// User will provide email and password
+// user.save - cuvanje korisnika u bazi
+// user.createSession() - kreiranje sesije za korisnika
+
+// userSchema.methods.createSession - razbijanje metode
+
+	user.generateRefreshAuthToken() = Koristeci cypto.randomBytes(64) => buffer => buffer.toString('hex')
+	kreiramo RefreshToken koji cemo kasnije koristiti za kreiranje AccessTokena
+	
+	saveSessionToDataBase(user, refreshToken) = generateRefrehTokenExpiryTime (vraca broj sekundi vazenja tokena) => 
+	user.sessions.push({'token':refreshToken, expiresAt:vremeVazenjaTokena(u sekundama)}
+
+// newUser.generateRefreshAuthToken() // kreiranje authTokena 

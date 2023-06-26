@@ -1,0 +1,43 @@
+
+Funkcionalnost: Na klik liste prikazuju se svi zadaci unutar te liste
+
+- Pri instanciranju to-do-komponente dobijamo prikaz svih lista zadataka
+- Svaka lista je zapravo link s putanjom list/this.list.listId
+- Odlaskom na ovu putanju ponovo pozivamo to-do komponentu sto je naznaceno u route fajlu
+- Iz address bara cemo "izvuci" informacije o trenutnoj listi, odnosno id liste
+i vratiti zadatke koji se nalaze u toj listi.
+
+
+// Greska
+
+Pri prijavi korisnika (email,password) izvrsava se niz funkcija.
+
+Kreiranje korisnika 
+Cuvanje na bazi
+Pre cuvanje na bazi izvrzava se predifined function koja hesira lozinku
+Zatim se kreira Sesija
+Dobijamo refreshToken
+Koristeci taj token kreiramo accessToken
+Dodajemo te tokene u header i vracamo korisnika
+
+Zanimljiva stvar se desila u user.pre('save')
+Lozinka je bila promenjena i sifrovana ali ta sifrovana vrednost nija bila sacuvana
+u bazi, vec samo raw vrednost, onakva kakva jeste, sto je veliki minus u kontekstu bezbednosti softvera.
+
+Problem je bio, kao sto cesto biva, u samom programeru :)
+
+bcrypt.genSalt methoda kreira salt, vrednost koja se dodaje uz lozinku i sve zajedno se hesira.
+Zasto nam treba salt ?
+
+Ukoliko bismo hesirali lozinku odredjenim algoritmom za sifrovanje dobili bismo vrednost npr. marko123 => AAAAA
+To i ne bi bio problem da ne postoji sansa da postoji korisnik koji ima ISTU 
+lozinku pa bi to izgledalo ovako:
+
+uneta lozinka: milos123 | sifrovana AAAA
+uneta lozinka: ana3442. | sifrovana FFFF
+uneta lozinka: milos123 | sifrovana AAAA
+
+Primecujemo da ukoliko razliciti korisnici unesu dve ISTE sifre, haker bi mogao
+znajuci da enkriptuje jednu da dodje u posed i drugoj
+
+  

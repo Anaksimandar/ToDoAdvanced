@@ -1,0 +1,15 @@
+<div class="container">
+    <div class="modal-box">
+        <h3>Add new list</h3>
+        <div id="form-container">
+            <div class="input-group">
+                <input [(ngModel)]="this.newList" placeholder="Name of your new list" class="form-control" type="text">
+            </div>
+            <div class="modal-footer my-4">
+                <button type="button" class="btn btn-secondary m-2" [routerLink]="'/'" >Close</button>
+                <button (click)="addNewList()" class="btn btn-primary " type="button">Submit</button>
+            </div>
+        </div>
+        
+    </div>
+</div>
