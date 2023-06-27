@@ -1,7 +1,7 @@
 const express = require('express');
 const userRouter = express.Router();
 const {verifySession,authentication} = require('../controlers/user.auth.controler');
-
+const {User} = require('../models/user.model')
 
 
 
@@ -30,9 +30,9 @@ userRouter.post('/sign-up',(req,res)=>{
     newUser.save().then(()=>{
             console.log('user.save');
             return newUser.createSession();
-        }).then(refreshToken=>{
+        }).then(accessToken=>{
             return newUser.generateRefreshAuthToken() // kreiranje authTokena
-                .then(accessToken=>{
+                .then(refreshToken=>{
                     return {accessToken,refreshToken};
                 })
         }).then(authToken=>{

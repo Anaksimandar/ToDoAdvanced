@@ -20,7 +20,7 @@ const UserSchema = new mongoose.Schema({
     },
     sessions:[
         {
-            token:{
+            accesstoken:{
                 type:String,
                 required:true
             },
@@ -47,8 +47,9 @@ UserSchema.methods.generateAccessAuthToken =  function(){
     const user = this;
     return new Promise((resolve,reject)=>{
         // Create JSON Web Token
-        jwt.sign({_id:user._id.toHexString()},jwtSecret,{expiresIn:"10s"},(err,token)=>{
+        jwt.sign({_id:user._id.toHexString()},jwtSecret,{expiresIn:"1000s"},(err,token)=>{
             if(!err){
+                console.log(token);
                 resolve(token);
             }
             else{
@@ -81,7 +82,7 @@ UserSchema.statics.findByIdAndToken = function(_id, token){
     
     return User.findOne({
         _id,
-        'sessions.token':token
+        'sessions.accesstoken':token
     })
     .then(user=>{
         
@@ -94,6 +95,12 @@ UserSchema.statics.findByIdAndToken = function(_id, token){
     })
 }
 
+
+// get JWT secret
+
+UserSchema.statics.getJWTSecret = ()=>{
+    return jwtSecret;
+}
 
 
 
@@ -151,11 +158,11 @@ UserSchema.pre('save',async function(next){
 UserSchema.methods.createSession =  function(){
     console.log('createSesion');
     let user = this;
-    return user.generateRefreshAuthToken() // u ovom slucaju momak je odlucio da kreira refresh token pa zatim access token
-            .then(refreshToken=>{
-                return saveSessionToDataBase(user,refreshToken)
-                    .then(refreshToken=>{
-                        return refreshToken;
+    return user.generateAccessAuthToken() // u ovom slucaju momak je odlucio da kreira refresh token pa zatim access token
+            .then(accessToken=>{
+                return saveSessionToDataBase(user,accessToken)
+                    .then(accessToken=>{
+                        return accessToken;
                     })
                     .catch(err=>{
                         return Promise.reject(err);
@@ -163,17 +170,17 @@ UserSchema.methods.createSession =  function(){
             })
 }
 
-let saveSessionToDataBase =  function(user,refreshToken){
+let saveSessionToDataBase =  function(user,accessToken){
     console.log('saveSessionToDataBase');
     // save session to database
     return new Promise((resolve,reject)=>{
-        let expiresAt = generateRefreshTokenExpiryTime(10);
-        user.sessions.push({'token':refreshToken,expiresAt:expiresAt})
+        let expiresAt = generateRefreshTokenExpiryTime(100);
+        user.sessions.push({'accesstoken':accessToken,expiresAt:expiresAt})
 
         user.save()
             .then(()=>{
                 // saved session successfully
-                return resolve(refreshToken);
+                return resolve(accessToken);
             })
             .catch(err=>{
                 reject(err);
@@ -182,10 +189,10 @@ let saveSessionToDataBase =  function(user,refreshToken){
 }
 
 // Is refresh token expired
-UserSchema.statics.hasRefreshTokenExpired = (expiresAt)=>{
+UserSchema.statics.hasRefreshTokenExpired = (expiresAt)=>{ // number of minutes
     let secondesSinceEpoch = Math.round(Date.now() / 1000); // since 1970.
     console.log(secondesSinceEpoch);
-    console.log(expiresAt);
+    console.log(expiresAt); 
     if(expiresAt > secondesSinceEpoch){
         return false;
     }

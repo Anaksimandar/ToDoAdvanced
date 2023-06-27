@@ -2,7 +2,7 @@ POST http://localhost:5000/users/login
 Content-Type: application/json
 
 {
-    "email": "slavoljub123@gmail.com",
+    "email": "slavoljub1234@gmail.com",
     "password": "12345678"
 }
 
@@ -12,7 +12,7 @@ POST http://localhost:5000/users/sign-up
 Content-Type: application/json
 
 {
-    "email": "slavoljusdab1d223ffs3@gmail.com",
+    "email": "slavoljsubssssd1ss@gmail.com",
     "password": "12345678"
 }
 ###
@@ -20,4 +20,10 @@ Content-Type: application/json
 GET http://localhost:5000/users/me/access-token
 Content-Type: application/json
 _id:6494e674ef010e2d53c0b083
-x-refresh-token:9846e529ebc2500e821d98d657ddaad4cb60be2606bcdb5c566185e19e1aca4aa46ca3ee9de371e87eb2d62aa76d6ad4389869c4ef7eae97b945eaf9c5e93369
+x-refresh-token:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDk5ZjU2MDFkNzU3MGYzMDkzY2JiYzYiLCJpYXQiOjE2ODc4MTE0MjQsImV4cCI6MTY4NzgxMjQyNH0.GEUasB6zbVi-Vr4qEPYMM_PDsIDvJwVfKZt8nbm1OWA
+
+###
+
+GET http://localhost:5000/lists
+Content-Type: application/json
+x-access-token:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDk5ZjU2MDFkNzU3MGYzMDkzY2JiYzYiLCJpYXQiOjE2ODc4MTE0MjQsImV4cCI6MTY4NzgxMjQyNH0.GEUasB6zbVi-Vr4qEPYMM_PDsIDvJwVfKZt8nbm1OWA

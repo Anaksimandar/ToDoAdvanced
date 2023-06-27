@@ -1,9 +1,13 @@
 const express = require('express');
+const { authentication } = require('../controlers/user.auth.controler');
 const listRouter = express.Router();
+const {List} = require('../models/list.model');
+const { Task } = require('../models');
 
-// vracanje svih lista
-listRouter.get('/',(req,res)=>{
-    List.find({})
+// Zelimo da vratimo sve liste koje pripadaju prijavljenom korisniku
+listRouter.get('/', authentication, (req,res)=>{
+    const userId = req.userId;
+    List.find({_userId:userId})
         .then(result=>{
             res.status(200).send(result);
         })
@@ -13,25 +17,32 @@ listRouter.get('/',(req,res)=>{
 })
 
 //dodavanje nove liste
-listRouter.post('/',(req,res)=>{
-    let title = req.body.title;
+listRouter.post('/',authentication,(req,res)=>{
+    const title = req.body.title;
+    const userId = req.userId;
+    console.log(userId);
     let newList = new List({
-        title
+        title:title,
+        _userId:userId
     })
     newList.save()
         .then(response=>{
             res.send(response);
         })
+        .catch(err=>{
+            res.status(500).send(err);
+        })
 })
 
 //azuriranje vec postojece liste
-listRouter.patch('/:id',(req,res)=>{
+listRouter.patch('/:id',authentication,(req,res)=>{
+    const userId = req.userId;
     List.findOneAndUpdate(
-        {_id: req.params.id},
+        {_id: req.params.id,_userId:userId},
         {$set:{title:req.body.title}}
     )
-    .then(response=>{
-        res.send(response)
+    .then(user=>{
+        res.send(user)
     })
     .catch(err=>{
         console.log('Doslo je do greske ' + err);
@@ -40,10 +51,13 @@ listRouter.patch('/:id',(req,res)=>{
 
 //brisanje jedne liste
 listRouter.delete('/:id',(req,res)=>{
+    const listId = req.params.id;
+    // ne zelimo da obrisemo samo listu vec i sve zadatke te liste
     List.findByIdAndDelete(
-        {_id: req.params.id}
+        {listId }
     )
     .then(response=>{
+        deleteTasks(listId)
         res.send(response)
     })
     .catch(err=>{
@@ -115,5 +129,13 @@ listRouter.delete('/:listId/tasks/:taskId',(req,res)=>{
         res.send('Doslo je do greske: ' + err);
     })
 })
+
+const deleteTasks = (_listId)=>{
+    Task.deleteMany({
+        _listId
+    }).then(user=>{
+        console.log('Deleted all tasks from list')
+    })
+}
 
 module.exports = {listRouter};

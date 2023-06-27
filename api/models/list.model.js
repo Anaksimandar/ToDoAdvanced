@@ -6,6 +6,10 @@ const ListSchema = mongoose.Schema({
         required:true,
         minlenght:1,
         trim:true
+    },
+    _userId:{
+        type:mongoose.Types.ObjectId,
+        required:true,
     }
 });
 
