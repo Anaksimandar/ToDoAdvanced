@@ -18,7 +18,7 @@ export class NewListComponent {
       this.listService.createNewList(this.newList).subscribe(result=>{
         alert('New List ' + this.newList + ' is succesfully created');
         this.newList = '';
-        this.router.navigate(['/list',result._id])
+        this.router.navigate(['/lists',result._id])
       })
       
     }

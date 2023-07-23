@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 const _ = require('lodash');
 const jwt = require('jsonwebtoken');
-const jwtSecret = "123223212323hsda321";
-const crypto = require('crypto');
 const bcrypt = require('bcrypt');
+require('dotenv').config();
+
 
 const UserSchema = new mongoose.Schema({
     email:{
@@ -18,18 +18,12 @@ const UserSchema = new mongoose.Schema({
         required:true,
         minlenght:4
     },
-    sessions:[
-        {
-            accesstoken:{
-                type:String,
-                required:true
-            },
-            expiresAt:{
-                type:Number,
-                required:true
-            }
+    sessions:[new mongoose.Schema({
+        refreshToken:{
+            type:String,
+            required:true
         }
-    ]
+    },{_id:false})]
 });
 
 // instace methods
@@ -43,13 +37,11 @@ UserSchema.methods.toJson =  function(){
 
 }
 
-UserSchema.methods.generateAccessAuthToken =  function(){
+UserSchema.methods.generateAccessToken =  function(){
     const user = this;
     return new Promise((resolve,reject)=>{
-        // Create JSON Web Token
-        jwt.sign({_id:user._id.toHexString()},jwtSecret,{expiresIn:"1000s"},(err,token)=>{
+        jwt.sign({_id:user._id.toHexString()},process.env.ACCESS_TOKEN_SECRET,{expiresIn:"1000s"},(err,token)=>{
             if(!err){
-                console.log(token);
                 resolve(token);
             }
             else{
@@ -57,74 +49,104 @@ UserSchema.methods.generateAccessAuthToken =  function(){
             }
         })
     })
+    
 }
 
-UserSchema.methods.generateRefreshAuthToken = function(){
-    return new Promise((resolve, reject)=>{
-        crypto.randomBytes(64,(err,buf)=>{
-            if(!err){
-                // no err
-                let token = buf.toString('hex');
+UserSchema.methods.generateRefreshToken = function(){
+    const user = this;
 
-                return resolve(token);
+    return new Promise((resolve,reject)=>{
+        jwt.sign({_id:user._id.toHexString()},process.env.REFRESH_TOKEN_SECRET,(err,token)=>{
+            if(!err){
+                resolve(token)
             }
             else{
-                return reject();
+                reject();
             }
         })
     })
+    
+    
+        
+    
 }
 
 // Model methods (static method)
-UserSchema.statics.findByIdAndToken = function(_id, token){
+UserSchema.statics.findByIdAndToken = async function(_id, token){
+    const user = this;
     
-    const User = this;
-    
-    return User.findOne({
-        _id,
-        'sessions.accesstoken':token
-    })
-    .then(user=>{
+    try{
+        const foundedUser = await user.findById({_id:_id,'sessions.refreshToken':token});
         
-        if(user === undefined) return Promise.reject('User doesnt exist');
-        console.log(user);
-        return user;
-    })
-    .catch(err=>{
-        return Promise.reject('Error' + err);
-    })
+        return foundedUser;
+    }
+    catch(err){
+        return 'User couldnt be find' + err;
+    }
 }
 
 
-// get JWT secret
+// get access token secret
 
-UserSchema.statics.getJWTSecret = ()=>{
-    return jwtSecret;
+UserSchema.statics.getAccessTokenSecret = ()=>{
+    return process.env.ACCESS_TOKEN_SECRET;
+}
+
+
+// get refresh token secret
+
+UserSchema.statics.getRefreshTokenSecret = ()=>{
+    return process.env.REFRESH_TOKEN_SECRET;
 }
 
 
 
 
-UserSchema.statics.findByCredentials = function(email, password){
-    const User = this;
-    return User.findOne({email})
-        .then((user)=>{
-            if(!user){
-                return Promise.reject('User doesnt exists');
-            }
-
-            return new Promise((resolve, reject)=>{
-                console.log('User:' + user);
-                bcrypt.compare(password,user.password,(err,res)=>{
-                    console.log(res);
-                    
-                    if(res) resolve(user);
-                    else{
-                        reject('Passwords are not same');
+UserSchema.statics.findByCredentials = async function(email, password){
+    const user = this;
+    
+    return new Promise((resolve,reject)=>{
+        user.findOne({email})
+            .then(user=>{
+                console.log(user);
+                if(!user) {
+                    return reject('User doesnt exists');
+                }
+                // user exists
+                // check the passwords match
+                bcrypt.compare(password,user.password,(err,same)=>{
+                    if (!same || err ){
+                        return reject('Passwords not same');
                     }
+                    return resolve(user);
                 })
+                
+
             })
-        })
+            .catch(err=>{
+                return reject('Error with finding user' + err);
+            })
+    })
+
+
+    // return user.findOne({email})
+    //     .then((user)=>{
+    //         if(!user){
+    //             return Promise.reject('User doesnt exists');
+    //         }
+
+    //         return new Promise((resolve, reject)=>{
+    //             console.log('User:' + user);
+    //             bcrypt.compare(password,user.password,(err,res)=>{
+    //                 console.log(res);
+                    
+    //                 if(res) resolve(user);
+    //                 else{
+    //                     reject('Passwords are not same');
+    //                 }
+    //             })
+    //         })
+    //     })
 
 }
 UserSchema.statics.test = ()=>{
@@ -155,32 +177,35 @@ UserSchema.pre('save',async function(next){
     }
 })
 
-UserSchema.methods.createSession =  function(){
+UserSchema.methods.createSession =  async function(){
     console.log('createSesion');
     let user = this;
-    return user.generateAccessAuthToken() // u ovom slucaju momak je odlucio da kreira refresh token pa zatim access token
-            .then(accessToken=>{
-                return saveSessionToDataBase(user,accessToken)
-                    .then(accessToken=>{
-                        return accessToken;
-                    })
-                    .catch(err=>{
-                        return Promise.reject(err);
-                    })
-            })
+
+    try{
+        const refreshToken = await user.generateRefreshToken();
+        await saveSessionToDataBase(user,refreshToken);
+        return refreshToken;
+    }
+    catch(err){
+        return 'Error with generating tokens: ' + err;
+    }
+
+    
 }
 
-let saveSessionToDataBase =  function(user,accessToken){
+let saveSessionToDataBase =  async function(user,refreshToken){
     console.log('saveSessionToDataBase');
     // save session to database
-    return new Promise((resolve,reject)=>{
-        let expiresAt = generateRefreshTokenExpiryTime(100);
-        user.sessions.push({'accesstoken':accessToken,expiresAt:expiresAt})
+    // let expiresAt = generateAccessTokenExpiryDate(100);
+    if(user.sessions.length === 0){
+        user.sessions.push({'refreshToken':refreshToken});
+    }
 
+    return new Promise((resolve,reject)=>{
         user.save()
-            .then(()=>{
-                // saved session successfully
-                return resolve(accessToken);
+            .then(user=>{
+                console.log(user);
+                resolve(user);
             })
             .catch(err=>{
                 reject(err);
@@ -199,7 +224,7 @@ UserSchema.statics.hasRefreshTokenExpired = (expiresAt)=>{ // number of minutes
     return true;
 }
 
-let generateRefreshTokenExpiryTime = (minutesUntilExpire)=>{
+let generateAccessTokenExpiryDate = (minutesUntilExpire)=>{
     let secondsUntilExpires = minutesUntilExpire * 60;
     let secondesSinceEpoch = Math.round(Date.now() / 1000);
     console.log(secondsUntilExpires);

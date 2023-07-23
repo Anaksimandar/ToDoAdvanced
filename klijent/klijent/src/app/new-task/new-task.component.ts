@@ -28,8 +28,6 @@ export class NewTaskComponent {
     this.taskService.createNewTask(this.newTask,this.listId).subscribe(result=>{
       alert(`New task ${result.title} has been created`)
       this.newTask = '';
-      console.log(result);
-      
       this.router.navigate(['lists',result._listId]);
     })
   }

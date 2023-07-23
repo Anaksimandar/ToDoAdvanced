@@ -3,35 +3,59 @@
     <div class="to-do-view-container">
         <div class="side-bar">
             <h1 class="h-1">LISTS</h1>
+            <!-- Dropdown button -->
+            <div *ngIf="this.lists.length > 0"  id="edit-list-btn" class="dropdown-center">
+                <a  class="dropdown-toggle " type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img id="edit-list-icon" src="../../assets/settings.png" alt="">
+                </a>
+                <ul class="dropdown-menu " aria-labelledby="dropdownMenuButton">
+                    <li class="list-edit-icons ">
+                        <a [routerLink]="['/edit-list',this.currentListId]" class="dropdown-item">Edit List</a>
+                    </li>
+                    <li class="list-edit-icons">
+                        <a (click)="deleteList()" class="dropdown-item">Delete List</a>
+                    </li>
+                </ul>
+              </div>
             <div class="list-container">
-                <div *ngFor="let list of this.lists;">
-                    <a [routerLink]="['/lists',list._id]" routerLinkActive="active" class="list-element">{{list.title}}</a>
+                <div class="list-element" *ngFor="let list of this.lists;">
+                    <a  [routerLink]="['/lists',list._id]" routerLinkActive="active" class="to-do-items">{{list.title}}</a>
                 </div>
             </div>
             <a [routerLink]="['/new-list']"  class="btn-add-list">
-                ADD LIST
+                ADD LIST 
             </a>
         </div>
         
         <div class="main-bar">
-            <h1 class="h-1">TASKS</h1>
+            <div  class="alert alert-success show">Task is successfully added</div>
+            <h1 class="h-1">TASKS</h1>  
+            <a (dragover)="openModal()"  href=""></a>
             <div class="task-container">
-                <div *ngIf="this.tasks === undefined; else showTasks">
-                    <div class="alert alert-info">Izaberite listu</div>
+                <div *ngIf="this.lists?.length  === 0">
+                    <div class="alert alert-info">Add new list</div>
                 </div>
                 <div *ngIf="this.tasks != undefined && this.tasks.length === 0; else showTasks">
-                    <div class="alert alert-info">Trenutno nema zadataka za izabranu listu</div>
+                    <div class="alert alert-info">There is no tasks for the selected list</div>
                 </div>
-                <ng-template #showTasks >
-                    <div [ngClass]="{completed: task.completed}" *ngFor="let task of this.tasks" (click)="toggleComplete(task)">
-                        <a   class="task-element">{{task.title}}</a>
+                <ng-template #showTasks>
+                    <div class="task"  *ngFor="let task of this.tasks" [ngClass]="{completed:task.completed}" >
+                        <a (click)="toggleComplete(task)"  class="task-name to-do-items">{{task.title}}</a>
+                        <div id="update-task">
+                            <a [routerLink]="['/edit-task',task._id]"   class="task-icon"><img  src="../../assets/editing (1).png" alt=""></a>
+                            <a (click)="deleteTask(task)" class="task-icon"><img  src="../../assets/delete.png" alt=""></a>
+                        </div>
                     </div>
+
                 </ng-template>
             </div>
-            <a [routerLink]="['./new-task']"  class="btn-add-task">+</a>
+            <a *ngIf="this.lists.length > 0" [routerLink]="['./new-task']"  class="btn-add-task">+</a>
+            <!-- ./new-task is actually current location, in this case /lists/id, + new-task -->
             
             
         </div>
         
     </div>
 </div>
+
+  

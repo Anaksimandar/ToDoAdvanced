@@ -1,0 +1,30 @@
+
+<div class="container">
+    <form [formGroup]="form" class="bg-white p-5">
+        <h2>Sign in</h2>
+        <div class="input-group my-2">
+          <div class="input-group-append">
+            <span class="input-group-text">
+              <img src="../../assets/email.png" alt="">
+            </span>
+          </div>
+          <input type="email" formControlName="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+        </div>
+
+        <div class="input-group">
+          <div class="input-group-append">
+            <span class="input-group-text">
+              <img src="../../assets/password.png" alt="">
+            </span>
+          </div>
+          <input type="password" formControlName="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+        </div>
+        <div class="form-btn-container">
+          <button (click)="onSignInButtonClick()" type="submit" class="btn my-2 form-button mr-auto">Sign in</button>
+        </div>
+        <div class="form-link">
+          <a class="link-info link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" [routerLink]="['/login']" >Don't have an account? Sign in</a>
+        </div>
+      </form>  
+</div>
+

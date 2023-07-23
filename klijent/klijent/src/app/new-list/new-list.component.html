@@ -1,9 +1,10 @@
 <div class="container">
     <div class="modal-box">
-        <h3>Add new list</h3>
         <div id="form-container">
+            <h3>ADD A NEW LIST</h3>
             <div class="input-group">
-                <input [(ngModel)]="this.newList" placeholder="Name of your new list" class="form-control" type="text">
+                <input autofocus [(ngModel)]="this.newList" placeholder="Name of your new list" class="form-control" type="text">
+                <!-- autofocus je koristan atribut jer smanjuje broj klikova korisnika sto dovodi do boljeg korisnickog iskustva-->
             </div>
             <div class="modal-footer my-4">
                 <button type="button" class="btn btn-secondary m-2" [routerLink]="'/'" >Close</button>

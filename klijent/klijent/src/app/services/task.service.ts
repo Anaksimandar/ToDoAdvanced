@@ -21,7 +21,20 @@ export class TaskService {
     return this.webClient.get(`lists/${listId}/${this.uri}`);
   }
 
-  complete(task:Task):Observable<any>{
-    return this.webClient.patch(`lists/${task.listId}/tasks/${task._id}`,{completed:!task.completed})
+  getTaskById(taskId:string):Observable<any>{
+    return this.webClient.get(`lists/task/${taskId}`);
   }
+
+  complete(task:Task):Observable<any>{
+    return this.webClient.patch(`lists/${task._listId}/tasks/${task._id}`,{completed:task.completed})
+  }
+
+  deleteTask(task:Task):Observable<any>{
+    return this.webClient.delete(`lists/${task._listId}/tasks/${task._id}`);
+  }
+
+  editTask(task:Task,update:object):Observable<any>{
+    return this.webClient.patch(`lists/${task._listId}/tasks/${task._id}`,update);
+  }
+  
 }

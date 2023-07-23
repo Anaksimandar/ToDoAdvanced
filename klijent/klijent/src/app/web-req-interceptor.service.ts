@@ -1,6 +1,6 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, throwError } from 'rxjs';
+import { Observable, catchError, empty, switchMap, tap, throwError } from 'rxjs';
 import { AuthService } from './auth.service';
 
 @Injectable({
@@ -15,6 +15,21 @@ export class WebReqInterceptorService implements HttpInterceptor {
       req = this.setHeaders(req);
       return next.handle(req).pipe(
         catchError((err:HttpErrorResponse)=>{
+          console.log(err);
+          if(err.status === 401){
+            // unauthorizied
+            return this.refreshToken().pipe(
+              switchMap(()=>{
+                req = this.setHeaders(req);
+                return next.handle(req);
+              }),
+              catchError((err:any)=>{
+                console.log(err);
+                this.authService.logout();
+                return empty(err);
+              })
+            )
+          }
           return throwError(err);
         })
       )
@@ -29,6 +44,14 @@ export class WebReqInterceptorService implements HttpInterceptor {
     }
     return req;
     
+  }
+
+  refreshToken(){
+    return this.authService.refreshToken().pipe(
+      tap((res)=>{
+        console.log(res);
+      })
+    )
   }
 
 }

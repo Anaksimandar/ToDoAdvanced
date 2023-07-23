@@ -1,0 +1,39 @@
+prijava korisnika (Klijent)
+
+POST /login - (API)
+	1. Find user (email,password) 
+	2. Generate token (access, refresh)
+	3. Returns tokens
+
+AuthService sets tokens to local session
+
+When we make request to see lists from API we have to authenticate first.
+Before sending request we have to set headers which will be read in API.
+
+We use interface HttpInterceptor to INTERCEPT request and add headers to it.
+Main method is intercept(req:HttpRequest, next:HttpHandler):Observable
+
+Interceptor works as middlewere in Node.js.
+
+We have to import HTTP_INTERCEPTORS to app.module.
+@NgModule({
+  declarations: [
+    AppComponent,
+    ToDoViewComponent,
+    NewListComponent,
+    NewTaskComponent,
+    LoginPageComponent
+  ],
+  imports: [
+    BrowserModule,
+    HttpClientModule,
+    AppRoute,
+    FormsModule,
+    ReactiveFormsModule
+  ],
+  providers: [
+----{provide:HTTP_INTERCEPTORS, useClass:WebReqInterceptorService, multi:true}
+  ],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }

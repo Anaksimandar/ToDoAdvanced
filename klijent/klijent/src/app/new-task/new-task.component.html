@@ -1,13 +1,15 @@
 <div class="container">
     <div class="modal-box">
-        <h3>Add new task</h3>
         <div id="form-container">
+            <h3>ADD A NEW TASK</h3>
             <div class="input-group">
-                <input [(ngModel)]="this.newTask" placeholder="Name of your new task" class="form-control" type="text">
+                <input autofocus [(ngModel)]="this.newTask" placeholder="Name of your new task" class="form-control" type="text">
             </div>
             <div class="modal-footer my-4">
                 <button type="button" class="btn btn-secondary m-2" [routerLink]="'../'" >Close</button>
                 <button (click)="addNewTask()" class="btn btn-primary " type="button">Submit</button>
+                <div id="liveAlertPlaceholder"></div>
+                <button type="button" class="btn btn-primary" id="liveAlertBtn">Show live alert</button>
             </div>
         </div>
     </div>

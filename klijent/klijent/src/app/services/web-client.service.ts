@@ -4,7 +4,7 @@ import {HttpClient} from '@angular/common/http';
   providedIn: 'root'
 })
 export class WebClientService {
-  private readonly url:string;
+  readonly url:string;
   constructor(private httpClient:HttpClient) { 
     this.url = 'http://localhost:5000';
   }
@@ -22,10 +22,21 @@ export class WebClientService {
   }
 
   delete(uri:string){
-    return this.httpClient.get(`${this.url}/${uri}`);
+    return this.httpClient.delete(`${this.url}/${uri}`);
   }
+
+  signIn(email:string,password:string){
+    return this.httpClient.post(`${this.url}/users/sign-up`,{
+      email,
+      password
+    },
+    {
+      observe:'response'
+    })
+  }
+
   login(email:string, password: string){
-    return this.httpClient.post(`${this.url}/users/sign-up`,
+    return this.httpClient.post(`${this.url}/users/login`,
     {
       email,
       password,
@@ -35,6 +46,8 @@ export class WebClientService {
     }
     );
   }
+
+ 
 
 
 

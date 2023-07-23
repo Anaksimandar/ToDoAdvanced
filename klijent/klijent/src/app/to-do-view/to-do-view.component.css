@@ -21,6 +21,7 @@
 
 .side-bar{
     display: flex;
+    position: relative;
     flex-direction: column;
     width: 300px;
     height: 500px;
@@ -45,24 +46,50 @@
     height: 500px;
     position: relative;
 }
-.list-element{
+/* update list button */
+#edit-list-btn{
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 32px 32px;
+}
+
+
+
+#edit-list-icon:hover{
+    animation-name: edit-list-btn;
+    animation-duration: 1s;
+}
+
+#edit-list-btn:hover::after{
+    
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    width: 70px;
+    background-color: #65bac5;
+}
+
+@keyframes edit-list-btn {
+    0%{
+        transform: rotate(0deg);
+    }
+    100%{
+        transform: rotate(90deg);
+    }
+}
+
+/*Modal*/
+
+
+.alert{
+    display: none;
     font-size: 20px;
     padding: 8px;
 }
 
-.task-element {
-    margin: 8px;
-    font-size: 20px;
-    padding: 8px;
-    
-}
-.alert{
-    font-size: 20px;
-    padding: 8px;
-}
-.list-element:hover{
-    background-color: hsl(187, 77%, 80%);
-}
 
 .main-bar{
     display: flex;
@@ -74,52 +101,86 @@
 }
 
 .btn-add-list{
+    padding: 16px 24px;
+    border: 2px solid #79E0EE ;
     margin:0 auto;
-    width: fit-content;
-    margin-top: 8px;
     font-size: 15px;
     text-decoration: none;
     background-color: #79E0EE;
     border-radius: 5px;
     color: white;
+    transition: 1s;
 
 }
 
 .btn-add-task{
+    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 50px;
     height: 50px;
-    background-color: aqua;
+    background-color: #79E0EE;
     position: absolute;
     bottom: 32px;
     right: 64px;
     border-radius:50%;
     font-size: 32px;
-    font-family: 'Times New Roman', Times, serif;
+    font-weight: 100;
+    border: 2px solid #79E0EE ;
+    transition: 1s;
+    
 }
 
 .btn-add-list:hover{
-    background-color:#65bac5 ;
+    background-color:white;
+    border: 2px solid #65bac5;
+    color: #65bac5;
+    transform: scale(110%);
+    transition: 1s;
     
 }
 
 .btn-add-task:hover{
-    background-color:#65bac5;
+    background-color:white;
+    border: 2px solid #65bac5;
+    color: #65bac5;
+    transform: scale(110%);
+    transition: 1s;
     
 }
 
-a{
+
+.to-do-items{
+    font-size: 20px;
     padding: 16px 24px;
-    text-decoration: none;
     display: block;
     color: black;
 }
 
-.task-element:hover{
-    box-shadow: 0px 0px 5px black;
+.task-element {
+    background-color: #65bac5;
+    position: relative;
+    margin: 8px;
+    font-size: 20px;
+    padding: 8px;
+    
 }
+
+.task:not(.completed):hover{
+    /* transform: scale(103%); */
+    box-shadow: 0px 0px 5px #777;
+    transition: box-shadow 0.2s ease;
+}
+
+
+
+
+.task:active:not(btn-edit-task){
+    transform: scale(95%);
+    transition: 0.8s ease;
+}
+
 
 .active{
     background-color: hsl(187, 77%, 80%);
@@ -128,4 +189,71 @@ a{
 
 .completed{
     text-decoration: line-through;
+    opacity: 0.8;
 }
+
+.task{
+    margin: 8px;
+    position: relative;
+}
+
+#update-task > a{
+    margin-left: 8px;
+}
+
+
+#update-task{
+    display: flex;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 16px 24px;
+}
+
+.task #update-task a{
+    display: none;
+}
+
+.list-element:hover{
+    background-color: hsl(187, 77%, 80%);
+}
+
+.task-icon:hover{
+    transform: scale(125%);
+    transition: 0.8s;
+}
+
+
+.task:hover #update-task .task-icon{
+    display:block;
+}
+
+.list-edit-icons:nth-child(2) > a{
+    color: red;
+}
+
+.dropdown-toggle::after{
+    content: none;
+}
+
+/* Working with alerts */
+
+.show{
+    display: block;
+    animation-name: addedTaskAlert;
+    animation-duration: 2s;
+}
+
+@keyframes addedTaskAlert {
+    0%{
+        opacity: 1;
+    }
+    100%{
+        opacity: 0;
+        display: none;
+    }
+}
+
+
+
+

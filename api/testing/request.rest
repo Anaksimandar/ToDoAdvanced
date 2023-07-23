@@ -12,7 +12,7 @@ POST http://localhost:5000/users/sign-up
 Content-Type: application/json
 
 {
-    "email": "slavoljsubssssd1ss@gmail.com",
+    "email": "aleksanndar00@gmail.com",
     "password": "12345678"
 }
 ###

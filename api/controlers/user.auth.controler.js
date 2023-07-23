@@ -8,24 +8,20 @@ const verifySession = (req,res,next)=>{
 
     User.findByIdAndToken(_id,refreshToken)
         .then(user=>{
+
             // User is found
             // Refresh token exists in the database - but we have to check if it has expired or not
             if(!user){
+                console.log('korisnik ne postoji');
                 return res.status(401).send('User with given credentials doesnt exists');
             }
-            _id = user._id;
-            refreshToken = refreshToken;
             req.userObject = user;
-
             let isSessionValid = false;
-            
             user.sessions.forEach((session)=>{
                 // check if the session has expired
-                if(session.token === refreshToken){
-                    if(User.hasRefreshTokenExpired(session.expiresAt) === false){
-                        // refresh token no expired
-                        isSessionValid = true;
-                    }
+                if(session.refreshToken === refreshToken){
+                    isSessionValid = true;
+                    // potrebno je izbaciti upotrebljeni refresh token i generisati novi
                 }
             })
 
@@ -34,14 +30,12 @@ const verifySession = (req,res,next)=>{
                 next()
             }
             else{
-                return Promise.reject({
-                    "error":"Refresh token has expired or the session is invalid"
-                });
+                return res.status(401).send('Bad authorization');
             }
         })
         .catch(err=>{
             console.log(err);
-            return res.status(401).send('Unautorized')
+            return res.status(401).send('Unautorized'+err)
         })
 
         
@@ -52,9 +46,10 @@ const authentication = (req,res,next)=>{
     const authToken = req.header('x-access-token');
     console.log(authToken);
     if(!authToken){
-        return res.status(401).send('Bad authentication. access token is not provided')
+        return res.status(401).send('Bad authentication. Access token is not provided')
     }
-    jwt.verify(authToken,User.getJWTSecret(),(err,user)=>{
+
+    jwt.verify(authToken,User.getAccessTokenSecret(),(err,user)=>{
         if(err){
             return res.status(401).send(err);
         }
