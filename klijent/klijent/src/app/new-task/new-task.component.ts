@@ -19,6 +19,10 @@ export class NewTaskComponent {
   ngOnInit(){
     this.route.params.subscribe((param:Params)=>{
       this.listId = param['listId'];
+      if(!this.listId){
+        alert('Please choose the list in which you want to add new task.')
+        this.router.navigate(['/']);
+      }
     })
     
     

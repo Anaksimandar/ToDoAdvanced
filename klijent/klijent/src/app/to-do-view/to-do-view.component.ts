@@ -14,9 +14,12 @@ export class ToDoViewComponent {
   public lists:List[] | undefined = [];
   public tasks:Task[] | undefined = [];
   public currentListId:string;
+  public taskIsLoading:boolean = true;
+  public listIsLoading:boolean = true;
   constructor(private taskService:TaskService,private listService:ListService,private route: ActivatedRoute, private router:Router){
     listService.getAllLists().subscribe(result=>{
       this.lists = result;
+      this.listIsLoading = false;
     });
   }
   // On init se poziva kada Angular zavrsi sa kreiranjem komponente
@@ -27,7 +30,7 @@ export class ToDoViewComponent {
           this.taskService.getTasksByListId(params['id']).subscribe((tasks:any)=>{
             this.currentListId = params['id'];
             this.tasks = tasks;
-            console.log(this.tasks);    
+            this.taskIsLoading = false;
           })
         }
         else{
@@ -36,6 +39,8 @@ export class ToDoViewComponent {
       })
       
   }
+
+  
 
   toggleComplete(task:Task){
     task.completed = !task.completed;
@@ -52,6 +57,9 @@ export class ToDoViewComponent {
   }
 
   deleteList(){
+    if(!this.currentListId){
+      return alert("You must select a List");
+    }
     this.listService.deleteList(this.currentListId).subscribe(
       res=>{
         console.log('result',res);
@@ -59,7 +67,7 @@ export class ToDoViewComponent {
         this.lists = this.lists?.filter(l=>l._id !== res._id);
         this.tasks = this.tasks?.filter(t=>t._listId !== res._id);
         this.router.navigate(['/'])
-        // kada dodje do brisanja liste u search baru nam ostaje id obrisane liste
+        // kada dodje do brisanja liste, u search baru nam ostaje id obrisane liste
         // ne zelimo da ga ostavimo jer pri get zahtevu api trazi listu sa unetim id-em 
         // ali posto prijavljeni korisnik ne sme da ima pristup toj listi automatski se odjavljuje
         // sto moze delovati lose za korisnicko iskustvo

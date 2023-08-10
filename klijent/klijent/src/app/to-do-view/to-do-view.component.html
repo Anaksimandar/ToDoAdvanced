@@ -28,14 +28,13 @@
         </div>
         
         <div class="main-bar">
-            <div  class="alert alert-success show">Task is successfully added</div>
             <h1 class="h-1">TASKS</h1>  
-            <a (dragover)="openModal()"  href=""></a>
             <div class="task-container">
-                <div *ngIf="this.lists?.length  === 0">
-                    <div class="alert alert-info">Add new list</div>
+                <div *ngIf="this.lists?.length  === 0 && this.listIsLoading == false">
+                    <div class="alert alert-info">ADD NEW LIST</div>
+                    
                 </div>
-                <div *ngIf="this.tasks != undefined && this.tasks.length === 0; else showTasks">
+                <div *ngIf="taskIsLoading == false && this.tasks.length === 0; else showTasks">
                     <div class="alert alert-info">There is no tasks for the selected list</div>
                 </div>
                 <ng-template #showTasks>

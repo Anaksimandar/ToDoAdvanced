@@ -81,14 +81,6 @@
     }
 }
 
-/*Modal*/
-
-
-.alert{
-    display: none;
-    font-size: 20px;
-    padding: 8px;
-}
 
 
 .main-bar{
@@ -236,23 +228,7 @@
     content: none;
 }
 
-/* Working with alerts */
 
-.show{
-    display: block;
-    animation-name: addedTaskAlert;
-    animation-duration: 2s;
-}
-
-@keyframes addedTaskAlert {
-    0%{
-        opacity: 1;
-    }
-    100%{
-        opacity: 0;
-        display: none;
-    }
-}
 
 
 
